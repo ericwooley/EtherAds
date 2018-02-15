@@ -1,0 +1,161 @@
+{
+  "compiler": {
+    "version": "0.4.21+commit.dfe3193c"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "withdraw",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_weiPerHour",
+            "type": "uint256"
+          },
+          {
+            "name": "_autoApprove",
+            "type": "bool"
+          }
+        ],
+        "name": "deployAd",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "testRet",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "donationAddress",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "test",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "name": "_donationAddress",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "fallback"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "ContractCreated",
+        "type": "event"
+      }
+    ],
+    "devdoc": {
+      "methods": {}
+    },
+    "userdoc": {
+      "methods": {}
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "AdFactory.sol": "AdFactory"
+    },
+    "evmVersion": "byzantium",
+    "libraries": {},
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": []
+  },
+  "sources": {
+    "AdContract.sol": {
+      "keccak256": "0x1da1ca9660a87a10c0a4ee7b5eeee19514917792f153a93737b040273ac6cdc9",
+      "urls": [
+        "bzzr://31358814172b571589c1fb03669ffae31e0a5ea7e6b724ea2af07906813c12e5"
+      ]
+    },
+    "AdFactory.sol": {
+      "keccak256": "0x958e8617ca2d5e5365e42866ea29ac2ee1e5d519f7958d92cc78a3dc44ff1657",
+      "urls": [
+        "bzzr://fa47fb96619474e817d43cc8ad43e9062f3de2d16e933097c685eea0b9d7fff2"
+      ]
+    },
+    "node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol": {
+      "keccak256": "0x1ad4ec802268eb3e02e732ecf8b65c39bb00cdf448e7737aea27ecfa9fd10d6a",
+      "urls": [
+        "bzzr://48e1527fc312977c07458860913fb596a78b3f1744202b75b8d27dcfe8bbea3b"
+      ]
+    }
+  },
+  "version": 1
+}

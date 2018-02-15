@@ -1,0 +1,16 @@
+{
+  "creation": [
+    81253,
+    324800
+  ],
+  "external": {
+    "autoApprove()": 495,
+    "buyAdTime(string)": null,
+    "nextAvailableTimeStamp()": null,
+    "owner()": 573,
+    "setPrice(uint256)": 20566,
+    "transferOwnership(address)": 22876,
+    "weiPerHour()": 373
+  },
+  "internal": {}
+}

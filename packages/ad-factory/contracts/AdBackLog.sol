@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.19;
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
@@ -7,27 +7,27 @@ contract AdBackLog is Ownable {
         uint startTime;
         uint endTime;
         string ipfsHash;
+        bool approved;
     }
     
-    address public owner;
-    uint256 public weiPerSecond;
+    uint256 public weiPerHour;
     Ad[] private ads;
+    bool public autoApprove = false;
 
-    function AdBackLog (uint256 wps ) public {
-        weiPerSecond = wps;
-        owner = msg.sender;
+    function AdBackLog (uint256 wps, bool _autoApprove) public payable {
+        weiPerHour = wps;
+        autoApprove = _autoApprove;
     }
 
     function setPrice (uint256 wps) public onlyOwner() returns(uint256) {
-        weiPerSecond = wps;
-        return wps;
+        weiPerHour = wps;
     }
 
     function buyAdTime (string ipfsHash) public payable {
         if (owner.send(msg.value)) {
-            var secondsPurchased = msg.value/weiPerSecond;
-            var endTime = block.timestamp + secondsPurchased;
-            var ad = Ad(block.timestamp, endTime, ipfsHash);
+            uint256 hoursPurchased = msg.value/weiPerHour;
+            uint256 endTime = block.timestamp + hoursPurchased;
+            var ad = Ad(block.timestamp, endTime, ipfsHash, autoApprove);
             ads.push(ad);
         }
     }
@@ -36,7 +36,7 @@ contract AdBackLog is Ownable {
     public 
     view
     returns (uint256) {
-        var nextAvailableTime = block.timestamp;
+        uint nextAvailableTime = block.timestamp;
         for (uint256 i = 0; i < ads.length; ++i) {
             var ad = ads[i];
             if (ad.startTime > block.timestamp && ad.endTime < nextAvailableTime) {

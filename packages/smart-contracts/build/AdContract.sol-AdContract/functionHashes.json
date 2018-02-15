@@ -1,0 +1,9 @@
+{
+  "autoApprove()": "c9be2521",
+  "buyAdTime(string)": "80a3a554",
+  "nextAvailableTimeStamp()": "a2dba0d6",
+  "owner()": "8da5cb5b",
+  "setPrice(uint256)": "91b7f5ed",
+  "transferOwnership(address)": "f2fde38b",
+  "weiPerHour()": "4c234952"
+}

@@ -1,0 +1,7 @@
+{
+  "deployAd(uint256,bool)": "a5ffbcf0",
+  "donationAddress()": "ec034bed",
+  "test()": "f8a8fd6d",
+  "testRet(uint256)": "ea06bc18",
+  "withdraw()": "3ccfd60b"
+}

@@ -96,3 +96,6 @@ Temporary Items
 
 
 # End of https://www.gitignore.io/api/osx
+private-ether/rinkeby
+private-ether/data
+private-ether/ropsten

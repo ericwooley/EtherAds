@@ -1,0 +1,37 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^9.4.7",
+    "bignumber.js": "^6.0.0",
+    "chalk": "^2.3.2",
+    "dotenv": "^5.0.1",
+    "ganache-cli": "^6.1.0",
+    "jest": "^22.4.2",
+    "rimraf": "^2.6.2",
+    "solc": "^0.4.21",
+    "ts-node": "^5.0.1",
+    "typescript": "^2.7.2",
+    "web3": "1.0.0-beta.30",
+    "zeppelin-solidity": "^1.6.0"
+  },
+  "scripts": {
+    "compile": "node scripts/build.js",
+    "test": "truffle test",
+    "remix": "screen -dmS remix remixd -s .",
+    "kill-dev": "screen -S remix -X quit; screen -S truffle -X quit",
+    "dev": "yarn kill-dev 2>&1 /dev/null; yarn truffle-dev; yarn remix; echo \"open https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.19+commit.c4cbbb05.js to develop \""
+  },
+  "devDependencies": {
+    "eslint": "^4.19.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^21.15.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1"
+  },
+  "jest": {}
+}

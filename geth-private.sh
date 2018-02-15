@@ -1,0 +1,2 @@
+
+geth --networkid "1005" --unlock 0x627306090abaB3A6e1400e9345bC60c78a8BEf57 --password /dev/null --rpc --rpccorsdomain="*" --ws --wsorigins="*" --datadir ./private-ether/data --mine --minerthreads=1 console

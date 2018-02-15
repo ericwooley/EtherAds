@@ -1,22 +1,48 @@
-/* globals artifacts, contract, web3, assert */
+/* globals artifacts, contract, it, assert, describe */
 var AdBackLogFactory = artifacts.require('../contracts/AdLogFactory.sol')
 var AdBackLog = artifacts.require('../contracts/AdBackLog.sol')
 
-contract('AdBackLog', function(accounts) {
-  it('should set the correct price from the constructor', async () => {
-    const weiPerSecond = 500
-    const factoryInstance = await AdBackLogFactory.deployed()
-    var event = factoryInstance.ContractCreated()
-    await factoryInstance.deployAd(weiPerSecond)
-    const addr = await new Promise((resolve, reject) =>
-      factoryInstance.ContractCreated((error, result) => {
-        if (error) return reject(error)
-        if (result.args.owner === accounts[0]) resolve(result.args.addr)
+const getContractEvents = (factoryInstance, accounts) =>
+  new Promise((resolve, reject) =>
+    factoryInstance
+      .ContractCreated(
+        { owner: accounts[0] },
+        { fromBlock: 0, toBlock: 'pending' }
+      )
+      .get((err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(data)
       })
-    )
-    const adBackLog = AdBackLog.at(addr)
-    const wps = await adBackLog.weiPerSecond()
+  )
+contract('AdBackLog Factory', function(accounts) {
+  describe('deployment', () => {
+    it('should deploy an ad, and get the events', async () => {
+      const weiPerHour = 500
+      const factoryInstance = await AdBackLogFactory.deployed()
+      const myContractsBefore = await getContractEvents(
+        factoryInstance,
+        accounts
+      )
+      await factoryInstance.deployAd.sendTransaction(weiPerHour, true, {
+        value: 100000
+      })
+      const myContractEvents = await getContractEvents(
+        factoryInstance,
+        accounts
+      )
+      assert.notEqual(myContractEvents.length, myContractsBefore.length)
+      for (var i = 0; i < myContractEvents.length; i++) {
+        var event = myContractEvents[i]
+        if (event.args.owner === accounts[0]) {
+          const adBackLog = AdBackLog.at(event.args.addr)
+          const wph = await adBackLog.weiPerHour.call()
 
-    assert.equal(weiPerSecond, wps)
+          return assert.equal(weiPerHour, wph.valueOf())
+        }
+      }
+      throw new Error('contract event not found')
+    })
   })
 })

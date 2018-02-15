@@ -1,0 +1,9 @@
+{
+  "name": "ipfs-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "docker-compose up -d; sleep 30; ./set-docker-vars.sh"
+  }
+}

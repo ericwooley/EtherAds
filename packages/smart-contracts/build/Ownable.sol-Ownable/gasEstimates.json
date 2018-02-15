@@ -1,0 +1,11 @@
+{
+  "creation": [
+    20491,
+    74800
+  ],
+  "external": {
+    "owner()": 526,
+    "transferOwnership(address)": 22766
+  },
+  "internal": {}
+}

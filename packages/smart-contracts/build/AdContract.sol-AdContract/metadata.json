@@ -1,0 +1,185 @@
+{
+  "compiler": {
+    "version": "0.4.21+commit.dfe3193c"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "weiPerHour",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "ipfsHash",
+            "type": "string"
+          }
+        ],
+        "name": "buyAdTime",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "wps",
+            "type": "uint256"
+          }
+        ],
+        "name": "setPrice",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "nextAvailableTimeStamp",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "autoApprove",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "name": "wps",
+            "type": "uint256"
+          },
+          {
+            "name": "_autoApprove",
+            "type": "bool"
+          }
+        ],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "previousOwner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      }
+    ],
+    "devdoc": {
+      "methods": {
+        "transferOwnership(address)": {
+          "details": "Allows the current owner to transfer control of the contract to a newOwner.",
+          "params": {
+            "newOwner": "The address to transfer ownership to."
+          }
+        }
+      }
+    },
+    "userdoc": {
+      "methods": {}
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "AdContract.sol": "AdContract"
+    },
+    "evmVersion": "byzantium",
+    "libraries": {},
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": []
+  },
+  "sources": {
+    "AdContract.sol": {
+      "keccak256": "0x1da1ca9660a87a10c0a4ee7b5eeee19514917792f153a93737b040273ac6cdc9",
+      "urls": [
+        "bzzr://31358814172b571589c1fb03669ffae31e0a5ea7e6b724ea2af07906813c12e5"
+      ]
+    },
+    "node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol": {
+      "keccak256": "0x1ad4ec802268eb3e02e732ecf8b65c39bb00cdf448e7737aea27ecfa9fd10d6a",
+      "urls": [
+        "bzzr://48e1527fc312977c07458860913fb596a78b3f1744202b75b8d27dcfe8bbea3b"
+      ]
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,96 @@
+{
+  "compiler": {
+    "version": "0.4.21+commit.dfe3193c"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "previousOwner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      }
+    ],
+    "devdoc": {
+      "methods": {
+        "transferOwnership(address)": {
+          "details": "Allows the current owner to transfer control of the contract to a newOwner.",
+          "params": {
+            "newOwner": "The address to transfer ownership to."
+          }
+        }
+      },
+      "title": "Ownable"
+    },
+    "userdoc": {
+      "methods": {}
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol": "Ownable"
+    },
+    "evmVersion": "byzantium",
+    "libraries": {},
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": []
+  },
+  "sources": {
+    "node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol": {
+      "keccak256": "0x1ad4ec802268eb3e02e732ecf8b65c39bb00cdf448e7737aea27ecfa9fd10d6a",
+      "urls": [
+        "bzzr://48e1527fc312977c07458860913fb596a78b3f1744202b75b8d27dcfe8bbea3b"
+      ]
+    }
+  },
+  "version": 1
+}

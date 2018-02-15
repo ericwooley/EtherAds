@@ -1,0 +1,15 @@
+{
+  "creation": [
+    null,
+    521600
+  ],
+  "external": {
+    "": 170,
+    "deployAd(uint256,bool)": null,
+    "donationAddress()": 592,
+    "test()": null,
+    "testRet(uint256)": 870,
+    "withdraw()": null
+  },
+  "internal": {}
+}
