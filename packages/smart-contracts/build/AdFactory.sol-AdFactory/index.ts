@@ -6,168 +6,88 @@
 
 import BigNumber from 'bignumber.js'
 
-type DeployEventEmitter<T> = {
-  on: (event: string, callBack: Function) => IDeployPromise<T>
-}
+type DeployEventEmitter<T> = { on: (event: string, callBack: Function) => IDeployPromise<T>}
 
 interface IDeployPromise<T> {
-  send: (
-    options: {
-      from: string
-      gas: number | string
-      gasPrice: number | string
-    },
-    onError: (error: Error, transactionHash: string) => any
-  ) => Promise<T> & {
-    on: (event: string, callBack: Function) => DeployEventEmitter<T>
-  }
+  send: (options?: {
+        from?: string,
+        gas?: number|string,
+        gasPrice?: number|string,
+        value?: number|string
+      }, onError?: (error: Error, transactionHash: string) => any) =>
+        Promise<T> & { on: (event: string, callBack: Function) => DeployEventEmitter<T>}
 }
 
 type DeployArgs = {
-  data: string
+  data: string,
   arguments: [string]
 }
 
-type IAdFactoryEvents = 'ContractCreated' | 'allEvents'
+type IAdFactoryEvents = "ContractCreated" | "allEvents";
 
 interface Event {
-  returnValues: Object
+  returnValues: Object,
   raw: {
-    data: string
-    topics: string[]
-  }
-  event: string
-  signature: string
-  logIndex: number
-  transactionIndex: number
-  transactionHash: string
-  blockHash: string
-  blockNumber: number
+      data: string,
+      topics: string[],
+  },
+  event: string,
+  signature: string,
+  logIndex: number,
+  transactionIndex: number,
+  transactionHash: string,
+  blockHash: string,
+  blockNumber: number,
   address: string
 }
 
 interface IEventOptions {
-  filter: Object
-  fromBlock: number
-  topics: string[]
+  filter?: Object,
+  fromBlock?: number,
+  topics?: string[]
 }
 
-type EventCallBack = (error: Error | void, event: Event) => any
+type EventCallBack = (error: Error|void, event: Event) => any
 
 type EventEmitter = {
-  on: (
-    type: 'data' | 'changed' | 'error',
-    callBack: (event: Event | Error) => any
-  ) => EventEmitter
+  on: (type: "data"|"changed"|"error", callBack: (event:Event|Error) => any) => EventEmitter
 }
-
-export interface IAdFactory {
-  clone: () => IAdFactory
-  deploy: (options: DeployArgs) => IDeployPromise<IAdFactory>
+export interface IAdFactoryDefinition {
+  clone: () => IAdFactory,
+  deploy: (options?: DeployArgs) => IDeployPromise<IAdFactory>,
   options: {
-    address: string
-    jsonInterface: Object[]
-    data: string
-    from: string
-    gasPrice: string
+    address: string,
+    jsonInterface: Object[],
+    data: string,
+    from: string,
+    gasPrice: string,
     gas: BigNumber
   }
+}
+export interface IAdFactory {
   methods: {
     withdraw: () => {
-      call: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => IDeployPromise<null>
-      send: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => IDeployPromise<null>
-      estimateGas: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => Promise<null>
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
       encodeABI: () => string
-    }
-    deployAd: (
-      _weiPerHour: BigNumber,
-      _autoApprove: boolean
-    ) => {
-      call: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => IDeployPromise<null>
-      send: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => IDeployPromise<null>
-      estimateGas: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: null) => any
-      ) => Promise<null>
+    },
+    deployAd: (_weiPerHour: BigNumber|number|string, _autoApprove: boolean) => {
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
       encodeABI: () => string
-    }
-    testRet: (
-      idx: BigNumber
-    ) => {
-      call: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => IDeployPromise<string>
-      send: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => IDeployPromise<string>
-      estimateGas: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => Promise<string>
-      encodeABI: () => string
-    }
+    },
     donationAddress: () => {
-      call: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => IDeployPromise<string>
-      send: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => IDeployPromise<string>
-      estimateGas: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string) => any
-      ) => Promise<string>
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
       encodeABI: () => string
     }
-    test: () => {
-      call: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string[]) => any
-      ) => IDeployPromise<string[]>
-      send: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string[]) => any
-      ) => IDeployPromise<string[]>
-      estimateGas: (
-        options: { from: string; gas: string; gasPrice: string },
-        callBack: (error: Error | void, result: string[]) => any
-      ) => Promise<string[]>
-      encodeABI: () => string
-    }
-  }
-  once: (
-    eventName: IAdFactoryEvents,
-    options: IEventOptions,
-    callBack: EventCallBack
-  ) => void
-  getPastEvents: (
-    eventName: IAdFactoryEvents,
-    options: IEventOptions,
-    callBack?: EventCallBack
-  ) => Promise<Event[]>
+  },
+  once: (eventName: IAdFactoryEvents, options: IEventOptions, callBack: EventCallBack) => void,
+  getPastEvents: (eventName: IAdFactoryEvents, options: IEventOptions, callBack?: EventCallBack) => Promise<Event[]>,
   events: {
-    ContractCreated: (
-      options: IEventOptions,
-      callBack?: IEventOptions
-    ) => EventEmitter
+    ContractCreated: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter
   }
 }

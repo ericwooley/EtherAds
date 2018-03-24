@@ -19,19 +19,38 @@
   },
   "scripts": {
     "compile": "node scripts/build.js",
-    "test": "truffle test",
+    "gen-types": "ts-node scripts/generate-types.ts",
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "build-contracts": "yarn compile && yarn gen-types",
     "remix": "screen -dmS remix remixd -s .",
     "kill-dev": "screen -S remix -X quit; screen -S truffle -X quit",
-    "dev": "yarn kill-dev 2>&1 /dev/null; yarn truffle-dev; yarn remix; echo \"open https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.19+commit.c4cbbb05.js to develop \""
+    "dev":
+      "yarn kill-dev 2>&1 /dev/null; yarn truffle-dev; yarn remix; echo \"open https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.19+commit.c4cbbb05.js to develop \"",
+    "watch": "npm-watch build-contracts"
+  },
+  "watch": {
+    "build-contracts": "src/**/*.sol"
   },
   "devDependencies": {
+    "@types/jest": "^22.2.2",
     "eslint": "^4.19.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jest": "^21.15.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "npm-watch": "^0.3.0",
+    "ts-jest": "^22.4.2",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0"
   },
-  "jest": {}
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/src/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
+  }
 }

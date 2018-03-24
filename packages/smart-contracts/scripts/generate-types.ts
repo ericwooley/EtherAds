@@ -1,3 +1,4 @@
+/* tslint:disable */
 import fs from 'fs'
 import { join } from 'path'
 import chalk from 'chalk'
@@ -43,9 +44,9 @@ function SolMethodToTSInterface(className: string) {
         )
         return `
       ${mi.name}: (${inputString}) => {
-      call: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: ${returnType}) => any) => IDeployPromise<${returnType}>,
-      send: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: ${returnType}) => any) => IDeployPromise<${returnType}>,
-      estimateGas: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
       encodeABI: () => string
     }
 `
@@ -66,7 +67,7 @@ function solcTypeToTSType(t: string) {
     return 'null'
   }
   if (words[1].indexOf('int') !== -1) {
-    type = 'BigNumber'
+    type = 'BigNumber|number|string'
   } else {
     switch (words[1]) {
       case 'address':
@@ -78,7 +79,7 @@ function solcTypeToTSType(t: string) {
         break
       case 'ufixed':
       case 'fixed':
-        type = 'BigNumber'
+        type = 'BigNumber|number|string'
         break
       default:
         console.log(words[1], '=>', 'null')
@@ -124,24 +125,22 @@ import BigNumber from 'bignumber.js'
 type DeployEventEmitter<T> = { on: (event: string, callBack: Function) => IDeployPromise<T>}
 
 interface IDeployPromise<T> {
-  send: (options: {
-        from: string,
-        gas: number|string,
-        gasPrice: number|string
-      }, onError: (error: Error, transactionHash: string) => any) =>
+  send: (options?: {
+        from?: string,
+        gas?: number|string,
+        gasPrice?: number|string,
+        value?: number|string
+      }, onError?: (error: Error, transactionHash: string) => any) =>
         Promise<T> & { on: (event: string, callBack: Function) => DeployEventEmitter<T>}
 }
 
 type DeployArgs = {
   data: string,
-  arguments: [${constructorArgsTypes.join(', ')}]
+  arguments: [${constructorArgsTypes.join(", ")}]
 }
 
-type I${contractName}Events = ${[
-        ...events.map(e => `"${e.name}"`),
-        `"allEvents"`
-      ].join(' | ')};
-      
+type I${contractName}Events = ${[...events.map(e => `"${e.name}"`), `"allEvents"`].join(" | ")};
+
 interface Event {
   returnValues: Object,
   raw: {
@@ -159,9 +158,9 @@ interface Event {
 }
 
 interface IEventOptions {
-  filter: Object,
-  fromBlock: number,
-  topics: string[]
+  filter?: Object,
+  fromBlock?: number,
+  topics?: string[]
 }
 
 type EventCallBack = (error: Error|void, event: Event) => any
@@ -169,10 +168,9 @@ type EventCallBack = (error: Error|void, event: Event) => any
 type EventEmitter = {
   on: (type: "data"|"changed"|"error", callBack: (event:Event|Error) => any) => EventEmitter
 }
-
-export interface I${contractName} {
+export interface I${contractName}Definition {
   clone: () => I${contractName},
-  deploy: (options: DeployArgs) => IDeployPromise<I${contractName}>,
+  deploy: (options?: DeployArgs) => IDeployPromise<I${contractName}>,
   options: {
     address: string,
     jsonInterface: Object[],
@@ -180,9 +178,11 @@ export interface I${contractName} {
     from: string,
     gasPrice: string,
     gas: BigNumber
-  },
+  }
+}
+export interface I${contractName} {
   methods: {
-    ${methods.join(',\n    ')}
+    ${methods.join(",\n    ")}
   },
   once: (eventName: I${contractName}Events, options: IEventOptions, callBack: EventCallBack) => void,
   getPastEvents: (eventName: I${contractName}Events, options: IEventOptions, callBack?: EventCallBack) => Promise<Event[]>,
@@ -190,10 +190,10 @@ export interface I${contractName} {
     ${events
       .map(e => e.name)
       .join(
-        ',\n    '
+        ",\n    "
       )}: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter
   }
-}`
+}`;
       return {
         contractInterface,
         dir,

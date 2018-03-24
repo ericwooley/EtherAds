@@ -34,45 +34,12 @@
       },
       {
         "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "testRet",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
         "inputs": [],
         "name": "donationAddress",
         "outputs": [
           {
             "name": "",
             "type": "address"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "test",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address[]"
           }
         ],
         "payable": false,
@@ -145,9 +112,9 @@
       ]
     },
     "AdFactory.sol": {
-      "keccak256": "0x958e8617ca2d5e5365e42866ea29ac2ee1e5d519f7958d92cc78a3dc44ff1657",
+      "keccak256": "0x09112a7aef096c80ef8cfff221192ced8763a6f90d593ba1b975ce9eadbaa5f6",
       "urls": [
-        "bzzr://fa47fb96619474e817d43cc8ad43e9062f3de2d16e933097c685eea0b9d7fff2"
+        "bzzr://71baae1c514f7e7e56fb1fd172157a42fd3fe296277ea1540837d47c4cce61b0"
       ]
     },
     "node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol": {

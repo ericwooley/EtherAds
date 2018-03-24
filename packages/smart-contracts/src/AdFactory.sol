@@ -11,21 +11,15 @@ contract AdFactory {
         uint256 value
     );
 
-    address[] public testRet;
 
     function AdFactory (address _donationAddress) public {
         donationAddress = _donationAddress;
-        testRet = [_donationAddress];
     }
 
     function() public payable {}
 
     function withdraw () public {
         donationAddress.transfer(address(this).balance);
-    }
-
-    function test() public view returns(address[]) {
-        return testRet;
     }
 
     function deployAd(

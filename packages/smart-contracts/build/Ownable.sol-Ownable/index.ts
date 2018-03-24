@@ -9,11 +9,12 @@ import BigNumber from 'bignumber.js'
 type DeployEventEmitter<T> = { on: (event: string, callBack: Function) => IDeployPromise<T>}
 
 interface IDeployPromise<T> {
-  send: (options: {
-        from: string,
-        gas: number|string,
-        gasPrice: number|string
-      }, onError: (error: Error, transactionHash: string) => any) =>
+  send: (options?: {
+        from?: string,
+        gas?: number|string,
+        gasPrice?: number|string,
+        value?: number|string
+      }, onError?: (error: Error, transactionHash: string) => any) =>
         Promise<T> & { on: (event: string, callBack: Function) => DeployEventEmitter<T>}
 }
 
@@ -23,7 +24,7 @@ type DeployArgs = {
 }
 
 type IOwnableEvents = "OwnershipTransferred" | "allEvents";
-      
+
 interface Event {
   returnValues: Object,
   raw: {
@@ -41,9 +42,9 @@ interface Event {
 }
 
 interface IEventOptions {
-  filter: Object,
-  fromBlock: number,
-  topics: string[]
+  filter?: Object,
+  fromBlock?: number,
+  topics?: string[]
 }
 
 type EventCallBack = (error: Error|void, event: Event) => any
@@ -51,10 +52,9 @@ type EventCallBack = (error: Error|void, event: Event) => any
 type EventEmitter = {
   on: (type: "data"|"changed"|"error", callBack: (event:Event|Error) => any) => EventEmitter
 }
-
-export interface IOwnable {
+export interface IOwnableDefinition {
   clone: () => IOwnable,
-  deploy: (options: DeployArgs) => IDeployPromise<IOwnable>,
+  deploy: (options?: DeployArgs) => IDeployPromise<IOwnable>,
   options: {
     address: string,
     jsonInterface: Object[],
@@ -62,18 +62,20 @@ export interface IOwnable {
     from: string,
     gasPrice: string,
     gas: BigNumber
-  },
+  }
+}
+export interface IOwnable {
   methods: {
     owner: () => {
-      call: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: string) => any) => IDeployPromise<string>,
-      send: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: string) => any) => IDeployPromise<string>,
-      estimateGas: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: string) => any) => Promise<string>,
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
       encodeABI: () => string
     },
     transferOwnership: (newOwner: string) => {
-      call: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: null) => any) => IDeployPromise<null>,
-      send: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: null) => any) => IDeployPromise<null>,
-      estimateGas: (options: {from: string, gas: string, gasPrice: string}, callBack: (error: Error|void, result: null) => any) => Promise<null>,
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
       encodeABI: () => string
     }
   },
