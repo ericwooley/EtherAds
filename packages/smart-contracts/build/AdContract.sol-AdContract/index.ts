@@ -66,6 +66,12 @@ export interface IAdContractDefinition {
 }
 export interface IAdContract {
   methods: {
+    ads: (idx: BigNumber|number|string) => {
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      encodeABI: () => string
+    },
     weiPerHour: () => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
       send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
@@ -91,6 +97,12 @@ export interface IAdContract {
       encodeABI: () => string
     },
     nextAvailableTimeStamp: () => {
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      encodeABI: () => string
+    },
+    pendingAds: (idx: BigNumber|number|string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
       send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
       estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,

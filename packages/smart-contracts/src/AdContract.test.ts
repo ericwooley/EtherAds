@@ -41,4 +41,42 @@ describe('AdContract', () => {
       expect(wph.valueOf()).toEqual(costPerHour)
     })
   })
+  describe('constants', () => {
+    let adContract: IAdContract
+    const costPerHour = '500000'
+    beforeEach(async () => {
+      const AdFactoryDef: IAdContractDefinition = new web3.eth.Contract(ABI)
+      adContract = await AdFactoryDef.deploy({
+              data: byteCode,
+              arguments: [costPerHour, true]
+            }).send({ from: accounts[0], gas: '1000000' })
+    })
+    it('should have weiPerHour', async () => {
+      const wph = await adContract.methods.weiPerHour().call()
+      expect(wph.valueOf()).toEqual(costPerHour)
+    })
+    it('should have autoApprove', async () => {
+      const ads = await adContract.methods.autoApprove().call()
+      expect(ads).toBe(true)
+    })
+  })
+  describe('methods', () => {
+    let adContract: IAdContract
+    const costPerHour = '500000'
+    beforeEach(async () => {
+      const AdFactoryDef: IAdContractDefinition = new web3.eth.Contract(ABI)
+      adContract = await AdFactoryDef.deploy({
+          data: byteCode,
+          arguments: [costPerHour, true]
+        }).send({ from: accounts[0], gas: '1000000' })
+    })
+    it('should set the price', async () => {
+      const newPrice = '1000000'
+      await adContract.methods.setPrice(newPrice).send({
+        from: accounts[0]
+      })
+      const updatedPrice = await adContract.methods.weiPerHour().call()
+      expect(updatedPrice.valueOf()).toBe(newPrice)
+    })
+  })
 })
