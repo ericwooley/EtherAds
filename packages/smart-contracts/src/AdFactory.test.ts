@@ -54,11 +54,23 @@ describe('AdFactory', () => {
       expect(donationAddress).toEqual(accounts[0])
     })
 
+  })
+  describe('methods', () => {
+    let adFactory: IAdFactory
+    beforeEach(async () => {
+      const AdFactoryDef: IAdFactoryDefinition = new web3.eth.Contract(ABI)
+      adFactory = await AdFactoryDef.deploy({
+        data: byteCode,
+        arguments: [accounts[0]]
+      }).send({ from: accounts[0], gas: '1000000' })
+    })
     it('should deploy an ad', async () => {
-      const txResult = await adFactory.methods.deployAd('50000', true).send({
-        from: accounts[0],
-        value: '1000000'
-      })
+      const txResult = await adFactory.methods
+        .deployAd('50000', true)
+        .send({
+          from: accounts[0],
+          value: '1000000'
+        })
     })
   })
 })
