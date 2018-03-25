@@ -2,7 +2,8 @@ import fs from 'fs'
 import { join } from 'path'
 import {
   IAdContract,
-  IAdContractDefinition
+  IAdContractDefinition,
+  IReceipt
 } from '../build/AdContract.sol-AdContract'
 import BigNumber from 'bignumber.js'
 let Web3 = require('web3')
@@ -83,26 +84,30 @@ describe('AdContract', () => {
       const ap = await adContract.methods.autoApprove().call()
       expect(ap).toBe(false)
     })
-    it('should buy ad time (autoApprove)', async (done) => {
+    it('should buy ad time (autoApprove)', async () => {
+
       const testHash = 'test-hash'
-      const method = adContract.methods
-        .buyAdTime(testHash)
-      const gas = new BigNumber(await method.estimateGas({ from: accounts[0], value: '100000000' }))
+      const method = adContract.methods.buyAdTime(testHash)
+      const gas = new BigNumber(await method.estimateGas(
+        {
+          from: accounts[0],
+          value: '100000000'
+        }
+      ))
       const gasPlusValue = gas.plus(costPerHour)
-      const txResult = method.send({
+      const txResult = await method.send({
         from: accounts[1],
         value: costPerHour,
         gas: gasPlusValue.toString()
       })
-      txResult.on('receipt', async (receipt: any) => {
-        expect(receipt.events.AdRequest).toBeTruthy()
-        console.log(receipt.events.AdRequest)
-        expect(receipt.events.AdRequest.returnValues.ipfsHash).toEqual(testHash)
-        expect(receipt.events.AdRequest.returnValues.approved).toEqual(true)
-        const adCount = await adContract.methods.adCount().call()
-        expect(adCount.valueOf()).toEqual('1')
-        done()
-      })
+
+      if (Array.isArray(txResult.events.AdRequest)) {
+        throw new Error('Multiple events thrown')
+      }
+      expect(txResult.events.AdRequest.returnValues.ipfsHash).toEqual(testHash)
+      expect(txResult.events.AdRequest.returnValues.approved).toEqual(true)
+      const adCount = await adContract.methods.adCount().call()
+      expect(adCount.valueOf()).toEqual('1')
     })
   })
 })
