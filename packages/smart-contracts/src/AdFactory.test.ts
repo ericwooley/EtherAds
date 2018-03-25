@@ -4,11 +4,10 @@ import {
   IAdFactory,
   IAdFactoryDefinition
 } from '../build/AdFactory.sol-AdFactory'
-let ganache = require('ganache-cli')
 let Web3 = require('web3')
 let web3 = new Web3()
-web3.setProvider(ganache.provider())
-
+web3.setProvider(process.env.ETH_PROVIDER || require('ganache-cli').provider())
+jest.setTimeout(100000)
 const ABI = JSON.parse(
   fs
     .readFileSync(

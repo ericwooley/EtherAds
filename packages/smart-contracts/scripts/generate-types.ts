@@ -45,11 +45,11 @@ function SolMethodToTSInterface(className: string) {
         return `
       ${mi.name}: (${inputString}) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<${returnType}>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: ${returnType}) => any) => IDeployPromise<${returnType}>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: ${returnType}) => any) => Promise<BigNumber>,
       encodeABI: () => string
     }
-`
+`;
       case 'fallback':
         return ``
       default:
@@ -89,6 +89,12 @@ function solcTypeToTSType(t: string) {
   return type + words[2]
 }
 
+const eventInterfaceToType = (def: ISolUnit[]) =>
+  `{ ${def
+    .map(({ name, type }) => `${name}: ${solcTypeToTSType(type)}`)
+    .join(", ")} }`;
+
+
 directories
   .map(getInterfaceFromDir)
   .map(
@@ -122,7 +128,7 @@ directories
 
 import BigNumber from 'bignumber.js'
 
-type DeployEventEmitter<T> = { on: (event: string, callBack: Function) => IDeployPromise<T>}
+type DeployEventEmitter<T> = { on: (event: string, callBack: (...args: any[]) => any) => IDeployPromise<T>}
 
 interface IDeployPromise<T> {
   send: (options?: {
@@ -131,7 +137,7 @@ interface IDeployPromise<T> {
         gasPrice?: number|string,
         value?: number|string
       }, onError?: (error: Error, transactionHash: string) => any) =>
-        Promise<T> & { on: (event: string, callBack: Function) => DeployEventEmitter<T>}
+        Promise<T> & { on: (event: string, callBack: Function) => IDeployPromise<T>}
 }
 
 type DeployArgs = {
@@ -163,6 +169,42 @@ interface IEventOptions {
   topics?: string[]
 }
 
+
+interface IReceiptEvent<T> {
+    returnValues: T,
+    raw: {
+        data: string,
+        topics: string[]
+    },
+    event: string,
+    signature: string,
+    logIndex: number,
+    transactionIndex: number,
+    transactionHash: string,
+    blockHash: string,
+    blockNumber: number,
+    address: string
+}
+export interface IReceipt {
+  "transactionHash": string,
+  "transactionIndex": number,
+  "blockHash": string,
+  "blockNumber": number,
+  "contractAddress": string,
+  "cumulativeGasUsed": number,
+  "gasUsed": number,
+  "events": {
+      ${events
+        .map(
+          e =>
+            `${e.name}: IReceiptEvent<${eventInterfaceToType(
+              e.inputs
+            )}>|IReceiptEvent<${eventInterfaceToType(e.inputs)}>[]`
+        )
+        .join(",\n      ")}
+  }
+}
+
 type EventCallBack = (error: Error|void, event: Event) => any
 
 type EventEmitter = {
@@ -170,7 +212,9 @@ type EventEmitter = {
 }
 export interface I${contractName}Definition {
   clone: () => I${contractName},
-  deploy: (options?: DeployArgs) => IDeployPromise<I${contractName}>,
+  deploy: (options?: DeployArgs) => IDeployPromise<I${contractName}>
+}
+export interface I${contractName} {
   options: {
     address: string,
     jsonInterface: Object[],
@@ -178,9 +222,7 @@ export interface I${contractName}Definition {
     from: string,
     gasPrice: string,
     gas: BigNumber
-  }
-}
-export interface I${contractName} {
+  },
   methods: {
     ${methods.join(",\n    ")}
   },
@@ -188,10 +230,13 @@ export interface I${contractName} {
   getPastEvents: (eventName: I${contractName}Events, options: IEventOptions, callBack?: EventCallBack) => Promise<Event[]>,
   events: {
     ${events
-      .map(e => e.name)
-      .join(
-        ",\n    "
-      )}: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter
+      .map(
+        e =>
+          `${
+            e.name
+          }: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter`
+      )
+      .join(",\n    ")}
   }
 }`;
       return {

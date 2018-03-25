@@ -4,11 +4,11 @@ import {
   IAdContract,
   IAdContractDefinition
 } from '../build/AdContract.sol-AdContract'
-let ganache = require('ganache-cli')
+import BigNumber from 'bignumber.js'
 let Web3 = require('web3')
 let web3 = new Web3()
-web3.setProvider(ganache.provider())
-
+web3.setProvider(process.env.ETH_PROVIDER || require('ganache-cli').provider())
+jest.setTimeout(100000)
 const ABI = JSON.parse(
   fs
     .readFileSync(
@@ -77,6 +77,32 @@ describe('AdContract', () => {
       })
       const updatedPrice = await adContract.methods.weiPerHour().call()
       expect(updatedPrice.valueOf()).toBe(newPrice)
+    })
+    it('should set autoApprove', async () => {
+      await adContract.methods.setAutoApprove(false).send({ from: accounts[0] })
+      const ap = await adContract.methods.autoApprove().call()
+      expect(ap).toBe(false)
+    })
+    it('should buy ad time (autoApprove)', async (done) => {
+      const testHash = 'test-hash'
+      const method = adContract.methods
+        .buyAdTime(testHash)
+      const gas = new BigNumber(await method.estimateGas({ from: accounts[0], value: '100000000' }))
+      const gasPlusValue = gas.plus(costPerHour)
+      const txResult = method.send({
+        from: accounts[1],
+        value: costPerHour,
+        gas: gasPlusValue.toString()
+      })
+      txResult.on('receipt', async (receipt: any) => {
+        expect(receipt.events.AdRequest).toBeTruthy()
+        console.log(receipt.events.AdRequest)
+        expect(receipt.events.AdRequest.returnValues.ipfsHash).toEqual(testHash)
+        expect(receipt.events.AdRequest.returnValues.approved).toEqual(true)
+        const adCount = await adContract.methods.adCount().call()
+        expect(adCount.valueOf()).toEqual('1')
+        done()
+      })
     })
   })
 })

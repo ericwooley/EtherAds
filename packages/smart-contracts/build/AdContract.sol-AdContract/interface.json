@@ -48,6 +48,25 @@
     "constant": false,
     "inputs": [
       {
+        "name": "_autoApprove",
+        "type": "bool"
+      }
+    ],
+    "name": "setAutoApprove",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
         "name": "ipfsHash",
         "type": "string"
       }
@@ -89,6 +108,20 @@
     ],
     "payable": false,
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "adCount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -178,6 +211,23 @@
     "payable": true,
     "stateMutability": "payable",
     "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "ipfsHash",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "AdRequest",
+    "type": "event"
   },
   {
     "anonymous": false,

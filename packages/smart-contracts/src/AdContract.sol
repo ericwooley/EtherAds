@@ -15,6 +15,11 @@ contract AdContract is Ownable {
     AdData[] public ads;
     bool public autoApprove = false;
 
+    event AdRequest (
+        string ipfsHash,
+        bool approved
+    );
+
     function AdContract (uint256 wps, bool _autoApprove) public payable {
         weiPerHour = wps;
         autoApprove = _autoApprove;
@@ -24,16 +29,25 @@ contract AdContract is Ownable {
         weiPerHour = wps;
     }
 
+    function setAutoApprove (bool _autoApprove) public onlyOwner() returns(uint256) {
+        autoApprove = _autoApprove;
+    }
+
+    function adCount () public view returns(uint) {
+        return ads.length;
+    }
+
     function buyAdTime (string ipfsHash) public payable {
-        owner.transfer(msg.value);
         uint256 hoursPurchased = msg.value/weiPerHour;
-        uint256 endTime = block.timestamp + hoursPurchased;
-        AdData memory ad = AdData(block.timestamp, endTime, ipfsHash, autoApprove);
+        require(hoursPurchased >= 1);
+        uint256 secondsPurchased = msg.value * 3600;
+        uint256 endTime = block.timestamp + secondsPurchased;
         if(autoApprove) {
-            ads.push(ad);
+            ads.push(AdData(block.timestamp, endTime, ipfsHash, autoApprove));
         } else {
-            pendingAds.push(ad);
+            pendingAds.push(AdData(block.timestamp, endTime, ipfsHash, autoApprove));
         }
+        emit AdRequest(ipfsHash, autoApprove);
     }
 
     function nextAvailableTimeStamp ()

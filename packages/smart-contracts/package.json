@@ -21,6 +21,8 @@
     "compile": "node scripts/build.js",
     "gen-types": "ts-node scripts/generate-types.ts",
     "test": "jest",
+    "test-slow": "jest --runInBand",
+    "test-private": "ETH_PROVIDER='http://127.0.0.1:8545' yarn test",
     "test-watch": "jest --watch",
     "build-contracts": "yarn compile && yarn gen-types",
     "remix": "screen -dmS remix remixd -s .",

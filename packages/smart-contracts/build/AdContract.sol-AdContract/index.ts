@@ -6,7 +6,7 @@
 
 import BigNumber from 'bignumber.js'
 
-type DeployEventEmitter<T> = { on: (event: string, callBack: Function) => IDeployPromise<T>}
+type DeployEventEmitter<T> = { on: (event: string, callBack: (...args: any[]) => any) => IDeployPromise<T>}
 
 interface IDeployPromise<T> {
   send: (options?: {
@@ -15,7 +15,7 @@ interface IDeployPromise<T> {
         gasPrice?: number|string,
         value?: number|string
       }, onError?: (error: Error, transactionHash: string) => any) =>
-        Promise<T> & { on: (event: string, callBack: Function) => DeployEventEmitter<T>}
+        Promise<T> & { on: (event: string, callBack: Function) => IDeployPromise<T>}
 }
 
 type DeployArgs = {
@@ -23,7 +23,7 @@ type DeployArgs = {
   arguments: [BigNumber|number|string, boolean]
 }
 
-type IAdContractEvents = "OwnershipTransferred" | "allEvents";
+type IAdContractEvents = "AdRequest" | "OwnershipTransferred" | "allEvents";
 
 interface Event {
   returnValues: Object,
@@ -47,6 +47,36 @@ interface IEventOptions {
   topics?: string[]
 }
 
+
+interface IReceiptEvent<T> {
+    returnValues: T,
+    raw: {
+        data: string,
+        topics: string[]
+    },
+    event: string,
+    signature: string,
+    logIndex: number,
+    transactionIndex: number,
+    transactionHash: string,
+    blockHash: string,
+    blockNumber: number,
+    address: string
+}
+export interface IReceipt {
+  "transactionHash": string,
+  "transactionIndex": number,
+  "blockHash": string,
+  "blockNumber": number,
+  "contractAddress": string,
+  "cumulativeGasUsed": number,
+  "gasUsed": number,
+  "events": {
+      AdRequest: IReceiptEvent<{ ipfsHash: string, approved: boolean }>|IReceiptEvent<{ ipfsHash: string, approved: boolean }>[],
+      OwnershipTransferred: IReceiptEvent<{ previousOwner: string, newOwner: string }>|IReceiptEvent<{ previousOwner: string, newOwner: string }>[]
+  }
+}
+
 type EventCallBack = (error: Error|void, event: Event) => any
 
 type EventEmitter = {
@@ -54,7 +84,9 @@ type EventEmitter = {
 }
 export interface IAdContractDefinition {
   clone: () => IAdContract,
-  deploy: (options?: DeployArgs) => IDeployPromise<IAdContract>,
+  deploy: (options?: DeployArgs) => IDeployPromise<IAdContract>
+}
+export interface IAdContract {
   options: {
     address: string,
     jsonInterface: Object[],
@@ -62,68 +94,79 @@ export interface IAdContractDefinition {
     from: string,
     gasPrice: string,
     gas: BigNumber
-  }
-}
-export interface IAdContract {
+  },
   methods: {
     ads: (idx: BigNumber|number|string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     weiPerHour: () => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
+      encodeABI: () => string
+    },
+    setAutoApprove: (_autoApprove: boolean) => {
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     buyAdTime: (ipfsHash: string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => IDeployPromise<null>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     owner: () => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: string) => any) => Promise<string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: string) => any) => IDeployPromise<string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     setPrice: (wps: BigNumber|number|string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
+      encodeABI: () => string
+    },
+    adCount: () => {
+      call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     nextAvailableTimeStamp: () => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     pendingAds: (idx: BigNumber|number|string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber|number|string>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => IDeployPromise<BigNumber|number|string>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: BigNumber|number|string) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     autoApprove: () => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: boolean) => any) => Promise<boolean>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: boolean) => any) => Promise<boolean>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: boolean) => any) => Promise<boolean>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: boolean) => any) => IDeployPromise<boolean>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: boolean) => any) => Promise<BigNumber>,
       encodeABI: () => string
     },
     transferOwnership: (newOwner: string) => {
       call: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
-      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
-      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string}, callBack?: (error: Error|void, result: null) => any) => Promise<null>,
+      send: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => IDeployPromise<null>,
+      estimateGas: (options?: {from: string, gas?: string, gasPrice?: string, value?: string|number|BigNumber}, callBack?: (error: Error|void, result: null) => any) => Promise<BigNumber>,
       encodeABI: () => string
     }
   },
   once: (eventName: IAdContractEvents, options: IEventOptions, callBack: EventCallBack) => void,
   getPastEvents: (eventName: IAdContractEvents, options: IEventOptions, callBack?: EventCallBack) => Promise<Event[]>,
   events: {
+    AdRequest: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter,
     OwnershipTransferred: (options: IEventOptions, callBack?: IEventOptions) => EventEmitter
   }
 }
